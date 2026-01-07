@@ -41,7 +41,15 @@ func main() {
 	}
 
 	userClient := NewUserClient(userServiceURL)
-	handler := NewOrderHandler(repo, userClient)
+
+	notificationURL := os.Getenv("NOTIFICATION_SERVICE_URL")
+	if notificationURL == "" {
+		notificationURL = "http://localhost:5052"
+	}
+
+	notificationClient := NewNotificationClient(notificationURL)
+
+	handler := NewOrderHandler(repo, userClient, notificationClient)
 
 	mux.HandleFunc("/orders", handler.CreateOrder)
 

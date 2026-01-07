@@ -6,14 +6,20 @@ import (
 )
 
 type OrderHandler struct {
-	repo       *OrderRepository
-	userClient *UserClient
+	repo               *OrderRepository
+	userClient         *UserClient
+	notificationClient *NotificationClient
 }
 
-func NewOrderHandler(repo *OrderRepository, userClient *UserClient) *OrderHandler {
+func NewOrderHandler(
+	repo *OrderRepository,
+	userClient *UserClient,
+	notificationClient *NotificationClient,
+) *OrderHandler {
 	return &OrderHandler{
-		repo:       repo,
-		userClient: userClient,
+		repo:               repo,
+		userClient:         userClient,
+		notificationClient: notificationClient,
 	}
 }
 
@@ -53,6 +59,11 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to create order", http.StatusInternalServerError)
 		return
 	}
+
+	h.notificationClient.Send(
+		order.UserID,
+		"Order created: "+order.Product,
+	)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
