@@ -22,7 +22,7 @@ func main() {
 
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "./data/users.db"
+		dbPath = "./data/orders.db"
 	}
 
 	db := initDB(dbPath)

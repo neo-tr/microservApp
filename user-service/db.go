@@ -10,7 +10,7 @@ import (
 )
 
 func initDB(dbPath string) *sql.DB {
-	if err := os.MkdirAll("user-service/data", 0755); err != nil {
+	if err := os.MkdirAll("./data", 0755); err != nil {
 		log.Fatalf("failed to create data directory: %v", err)
 	}
 

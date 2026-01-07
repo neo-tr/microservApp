@@ -17,7 +17,7 @@ func main() {
 
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "data/users.db"
+		dbPath = "./data/users.db"
 	}
 
 	db := initDB(dbPath)
