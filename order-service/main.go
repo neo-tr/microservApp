@@ -33,6 +33,18 @@ func main() {
 		}
 	}(db)
 
+	repo := NewOrderRepository(db)
+
+	userServiceURL := os.Getenv("USER_SERVICE_URL")
+	if userServiceURL == "" {
+		userServiceURL = "http://localhost:5050"
+	}
+
+	userClient := NewUserClient(userServiceURL)
+	handler := NewOrderHandler(repo, userClient)
+
+	mux.HandleFunc("/orders", handler.CreateOrder)
+
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: mux,
