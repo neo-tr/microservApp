@@ -5,21 +5,25 @@ import (
 	"net/http"
 )
 
+type NotificationSender interface {
+	Send(userID int, message string)
+}
+
 type OrderHandler struct {
 	repo               *OrderRepository
 	userClient         *UserClient
-	notificationClient *NotificationClient
+	notificationClient NotificationSender
 }
 
 func NewOrderHandler(
 	repo *OrderRepository,
 	userClient *UserClient,
-	notificationClient *NotificationClient,
+	notificationSender NotificationSender,
 ) *OrderHandler {
 	return &OrderHandler{
 		repo:               repo,
 		userClient:         userClient,
-		notificationClient: notificationClient,
+		notificationClient: notificationSender,
 	}
 }
 

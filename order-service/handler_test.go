@@ -11,6 +11,12 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type mockNotificationClient struct{}
+
+func (m *mockNotificationClient) Send(userID int, message string) {
+	// ничего не делаем
+}
+
 func setupOrderHandlerTestDB(t *testing.T) *sql.DB {
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {
@@ -33,7 +39,6 @@ func setupOrderHandlerTestDB(t *testing.T) *sql.DB {
 }
 
 func TestCreateOrder_OK(t *testing.T) {
-	// mock User Service
 	userServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -42,7 +47,9 @@ func TestCreateOrder_OK(t *testing.T) {
 	db := setupOrderHandlerTestDB(t)
 	repo := NewOrderRepository(db)
 	userClient := NewUserClient(userServer.URL)
-	handler := NewOrderHandler(repo, userClient)
+	notificationClient := &mockNotificationClient{}
+
+	handler := NewOrderHandler(repo, userClient, notificationClient)
 
 	body := map[string]interface{}{
 		"user_id": 1,
@@ -69,7 +76,9 @@ func TestCreateOrder_UserNotFound(t *testing.T) {
 	db := setupOrderHandlerTestDB(t)
 	repo := NewOrderRepository(db)
 	userClient := NewUserClient(userServer.URL)
-	handler := NewOrderHandler(repo, userClient)
+	notificationClient := &mockNotificationClient{}
+
+	handler := NewOrderHandler(repo, userClient, notificationClient)
 
 	body := map[string]interface{}{
 		"user_id": 999,
