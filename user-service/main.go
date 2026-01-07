@@ -17,7 +17,7 @@ func main() {
 
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "user-service/data/users.db"
+		dbPath = "data/users.db"
 	}
 
 	db := initDB(dbPath)
@@ -27,6 +27,12 @@ func main() {
 
 		}
 	}(db)
+
+	repo := NewUserRepository(db)
+	handler := NewUserHandler(repo)
+
+	mux.HandleFunc("/users", handler.CreateUser)
+	mux.HandleFunc("/users/", handler.GetUserByID)
 
 	port := os.Getenv("PORT")
 	if port == "" {

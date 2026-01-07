@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"path/filepath"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -25,6 +26,9 @@ func initDB(dbPath string) *sql.DB {
 	if err := createUsersTable(db); err != nil {
 		log.Fatalf("failed to create users table: %v", err)
 	}
+
+	abs, _ := filepath.Abs(dbPath)
+	log.Println("USING SQLITE DB:", abs)
 
 	return db
 }
