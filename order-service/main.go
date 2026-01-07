@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -18,6 +19,19 @@ func main() {
 	if port == "" {
 		port = "5001"
 	}
+
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "./data/users.db"
+	}
+
+	db := initDB(dbPath)
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+
+		}
+	}(db)
 
 	server := &http.Server{
 		Addr:    ":" + port,
